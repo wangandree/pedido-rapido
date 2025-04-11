@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedido de Mercadorias</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .produto {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .produto input[type='text'],
+    .produto input[type='number'] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .produto input[type='text'] {
+      width: 100%;
+    }
+
+    .produto input[type='number'] {
+      width: 100%;
+    }
+
+    label {
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: #555;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #25D366;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #20b954;
+    }
+
+    .btn-secundario {
+      background-color: #ccc;
+      color: #333;
+    }
+
+    .btn-secundario:hover {
+      background-color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pedido Rápido</h1>
+  <div class="card">
+    <div id="lista-produtos"></div>
+    <button class="btn-secundario" onclick="adicionarCampos(10)">Adicionar mais produtos</button>
+    <button onclick="enviarPedido()">Enviar Pedido pelo WhatsApp</button>
+  </div>
+
+  <script>
+    const lista = document.getElementById('lista-produtos');
+
+    function adicionarCampos(quantidade) {
+      for (let i = 0; i < quantidade; i++) {
+        const div = document.createElement('div');
+        div.className = 'produto';
+        div.innerHTML = `
+          <div style="flex: 1; display: flex; flex-direction: column;">
+            <label>Código do produto</label>
+            <input type="text" class="codigo" />
+          </div>
+          <div style="width: 100px; display: flex; flex-direction: column;">
+            <label>Qtd. (em caixas)</label>
+            <input type="number" min="0" value="0" class="quantidade" />
+          </div>`;
+        lista.appendChild(div);
+      }
+    }
+
+    // Inicialmente adiciona 10
+    adicionarCampos(10);
+
+    function enviarPedido() {
+      const codigos = document.querySelectorAll('.codigo');
+      const quantidades = document.querySelectorAll('.quantidade');
+      let mensagem = "Olá, gostaria de fazer um pedido:%0A";
+
+      for (let i = 0; i < codigos.length; i++) {
+        const codigo = codigos[i].value.trim();
+        const quantidade = parseInt(quantidades[i].value);
+        if (codigo !== "" && quantidade > 0) {
+          mensagem += `- Código ${codigo}: ${quantidade} caixas%0A`;
+        }
+      }
+
+      if (mensagem === "Olá, gostaria de fazer um pedido:%0A") {
+        alert("Preencha pelo menos um código e quantidade.");
+        return;
+      }
+
+      const numero = "5581999999999"; // Substitua pelo seu número com DDI e DDD
+      const url = `https://wa.me/${numero}?text=${mensagem}`;
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>
+
